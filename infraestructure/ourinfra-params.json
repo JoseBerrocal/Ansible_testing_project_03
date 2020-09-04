@@ -1,0 +1,14 @@
+[
+    {
+        "ParameterKey": "EnvironmentName",
+        "ParameterValue": "AnsibleTower"
+    },    
+    {
+        "ParameterKey": "VpcBlock",
+        "ParameterValue": "192.168.0.0/16"
+    },
+    {
+        "ParameterKey": "Subnet01Block",
+        "ParameterValue": "192.168.64.0/18"
+    }
+]
