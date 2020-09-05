@@ -1,0 +1,126 @@
+Description: >
+    Jose Berrocal / Ansible
+    This is a demo and update
+
+Parameters:
+
+  EnvironmentName:
+    Type: String
+    Default: "AnsibleTower"
+    Description: An environment name that will be prefixed to resource names
+
+  VpcBlock:
+    Type: String
+    Default: 192.168.0.0/16
+    Description: The CIDR range for the VPC. This should be a valid private (RFC 1918) CIDR range.
+
+  HomeIP:
+    Type: String
+    Default: 179.6.194.135/32
+    Description: The CIDR range for my home. This should be a valid private (RFC 1918) CIDR range.
+
+  KeyName:
+    Description: The EC2 Key Pair to allow SSH access to the instances
+    Type: AWS::EC2::KeyPair::KeyName
+
+  NodeImageId:
+    Type: AWS::EC2::Image::Id
+    Description: AMI id for the node instances.
+
+Resources:
+
+  AnsibleWebServerSecGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+        GroupDescription: Allow http to our hosts and SSH from local only
+        VpcId:
+          Fn::ImportValue:
+            !Sub "${EnvironmentName}-VPC-ID"
+        SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: !Ref VpcBlock
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref HomeIP 
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref VpcBlock          
+        - IpProtocol: icmp
+          FromPort: -1
+          ToPort: -1
+          CidrIp: !Ref HomeIP
+        - IpProtocol: icmp
+          FromPort: -1
+          ToPort: -1
+          CidrIp: !Ref VpcBlock                  
+        SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 0
+          ToPort: 65535
+          CidrIp: 0.0.0.0/0              
+        - IpProtocol: icmp
+          FromPort: -1
+          ToPort: -1
+          CidrIp: !Ref HomeIP
+        - IpProtocol: icmp
+          FromPort: -1
+          ToPort: -1
+          CidrIp: !Ref VpcBlock     
+
+  Ec2InstanceAnsibleTower:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: !Ref NodeImageId
+      KeyName: !Ref KeyName
+      BlockDeviceMappings: 
+      - DeviceName: "/dev/sda1"
+        Ebs: 
+          DeleteOnTermination: "true"
+          VolumeSize: "8"
+          VolumeType: gp2
+      IamInstanceProfile: "Jenkins-Role"
+      NetworkInterfaces: 
+        - AssociatePublicIpAddress: "true"
+          DeviceIndex: "0"
+          GroupSet: 
+            - Ref: "AnsibleWebServerSecGroup"
+          SubnetId: 
+            Fn::ImportValue:
+              !Sub ${EnvironmentName}-SUBNET-IDs-01   
+      Tags:
+        - Key: Name
+          Value: ansible-tower-testing1
+        - Key: Type
+          Value: Server Instance              
+
+  Ec2InstanceJenskins:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: !Ref NodeImageId
+      KeyName: !Ref KeyName
+      BlockDeviceMappings: 
+      - DeviceName: "/dev/sda1"
+        Ebs: 
+          DeleteOnTermination: "true"
+          VolumeSize: "8"
+          VolumeType: gp2
+      IamInstanceProfile: "Jenkins-Role"
+      NetworkInterfaces: 
+        - AssociatePublicIpAddress: "true"
+          DeviceIndex: "0"
+          GroupSet: 
+            - Ref: "AnsibleWebServerSecGroup"
+          SubnetId: 
+            Fn::ImportValue:
+              !Sub ${EnvironmentName}-SUBNET-IDs-01   
+      Tags:
+        - Key: Name
+          Value: jenkins-ec2-testing1
+        - Key: Type
+          Value: Server Instance   

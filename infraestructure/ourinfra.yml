@@ -22,7 +22,7 @@ Parameters:
 
   Subnet01Block:
     Type: String
-    Default: 192.168.64.0/18
+    Default: 192.168.1.0/24
     Description: CidrBlock for subnet 01 within the VPC
 
 Metadata:

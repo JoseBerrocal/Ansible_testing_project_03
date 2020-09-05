@@ -1,0 +1,22 @@
+[
+    {
+        "ParameterKey": "EnvironmentName",
+        "ParameterValue": "AnsibleTower"
+    },
+    {
+        "ParameterKey": "NodeImageId",
+        "ParameterValue": "ami-0a634ae95e11c6f91"
+    },
+    {
+        "ParameterKey": "KeyName",
+        "ParameterValue": "jb_aws_keypair"
+    },    
+    {
+        "ParameterKey": "VpcBlock",
+        "ParameterValue": "192.168.0.0/16"
+    },
+    {
+        "ParameterKey": "HomeIP",
+        "ParameterValue": "179.6.194.135/32"
+    }
+]
