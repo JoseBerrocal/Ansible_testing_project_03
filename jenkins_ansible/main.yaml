@@ -1,0 +1,8 @@
+# Install Java
+- hosts: jenkins_servers
+  connection: ssh
+  become: True
+  become_user: root
+  roles:
+    - java
+    - jenkins
