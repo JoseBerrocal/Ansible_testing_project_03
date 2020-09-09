@@ -110,7 +110,7 @@ Resources:
               !Sub ${EnvironmentName}-SUBNET-IDs-01   
       Tags:
         - Key: Name
-          Value: ansible-tower-testing1
+          Value: ansible-testing1
         - Key: Type
           Value: Server Instance              
 
